@@ -1,0 +1,26 @@
+{
+  "name": "codedatasurvey",
+  "version": "1.0.0",
+  "description": "This Express Apps goal is to take an Users Code Lerning Plattform API Key, and fetch certain Datasets. After the Data gets anonymized and Stored within a SQL Database.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/studyjourney/codedatasurvey.git"
+  },
+  "author": "Study Journey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/studyjourney/codedatasurvey/issues"
+  },
+  "homepage": "https://github.com/studyjourney/codedatasurvey#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
