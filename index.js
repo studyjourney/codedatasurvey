@@ -13,6 +13,7 @@ app.set('view engine', 'ejs');
 /*
 *   Route Handlers
 */
+app.use('/', express.static('static'));
 
 app.get("/", function (req, res) {
     res.render('index');
@@ -29,10 +30,10 @@ app.get('*', function (req, res) {
 });
 
 //Listen on Config Port
-app.listen(process.env.port, function () {
+app.listen(process.env.PORT, function () {
     console.log('\033c')
     console.log(con.wlc);
-    console.log(con.info + `Listening on port ${process.env.port}`);
+    console.log(con.info + `Listening on port ${process.env.PORT}`);
 });
 
 //Make sure the app continues on errors
