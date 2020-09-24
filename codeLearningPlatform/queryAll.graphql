@@ -1,0 +1,33 @@
+query all {
+  myStudies {
+    shortCode  # eg SE_36_Fall_2019. We don't need this but I think it's good to have in case we can't work with the semesterModule id later
+    assessments {
+      assessmentStatus  # present, absent, etc
+      assessmentStyle  # standard, alternative, etc
+      examinationForms  # oral, written, etc
+      proposalText
+      grade
+      assessmentProtocol
+      internalNotes
+      externalFeedback
+      attempt
+      earlyAssessmentProposal
+      assessmentType  # normal, reassessment, level up, etc
+      project {
+        id
+      }
+			semesterModule {
+        id
+			}
+    }
+  }
+	mySemesterModules {
+    id
+  }
+	myEventGroups {
+    id
+  }
+	myProjects {
+    id
+  }
+}

@@ -1,1 +1,55 @@
 Hello World
+
+<!-- Placeholder functionality-only UI -->
+
+<div id='welcome-div'>
+    <a href='https://app.code.berlin/settings?table=api', target='_blank'>
+        Get your token here
+    </a>
+    <br />
+    <form id='token-form' action='/token'>
+        <label>Token:</label>
+        <br />
+        <input type='password' id='token-input' />
+        <br />
+        <input type='submit' value='Submit' />
+    </form>
+</div>
+<div id='sending-div' style='display:none'>
+    Processing...
+</div>
+<div id='success-div' style='display:none'>
+    Thanks!
+</div>
+<div id='error-div' style='display:none'>
+    Oops :(
+</div>
+
+<script type='text/javascript'>
+    const welcomeDiv = document.getElementById('welcome-div')
+    const sendingDiv = document.getElementById('sending-div')
+    const successDiv = document.getElementById('success-div')
+    const errorDiv = document.getElementById('error-div')
+    document.getElementById('token-form').addEventListener('submit', e => {
+        e.preventDefault()
+        welcomeDiv.setAttribute('style', 'display:none')
+        sendingDiv.setAttribute('style', 'display:block')
+        fetch('/codeData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: document.getElementById('token-input').value,
+            }),
+        })
+        .then(res => {
+            if (res.status < 400) successDiv.setAttribute('style', 'display:block')
+            else errorDiv.setAttribute('style', 'display:block')
+        })
+        .catch(() => {
+            errorDiv.setAttribute('style', 'display:block')
+        })
+        .finally(() => {
+            sendingDiv.setAttribute('style', 'display:none')
+        })
+    })
+</script>

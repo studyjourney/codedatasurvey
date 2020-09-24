@@ -4,6 +4,7 @@
   "description": "This Express Apps goal is to take an Users Code Lerning Plattform API Key, and fetch certain Datasets. After the Data gets anonymized and Stored within a SQL Database.",
   "main": "index.js",
   "scripts": {
+    "start": "node ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/studyjourney/codedatasurvey#readme",
   "dependencies": {
+    "axios": "^0.20.0",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
