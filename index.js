@@ -6,7 +6,7 @@ require('dotenv').config();
 //Custom Modules
 const con = require('./consolelog');
 const db = require('./db');
-const { getStudentData } = require('./codeLearningPlatform');
+const { getMyStudies, getCurrentSemester, getEvents, getProjects } = require('./codeLearningPlatform');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -28,13 +28,12 @@ app.get('/ping', function (req, res) {
 //CODE data aquisition API token
 app.post('/codeData', async (req, res) => {
     try {
-        const { token } = req.body
-        const data = await getStudentData(token)
+        const { token, permissions } = req.body
         const studentId = await db.newStudent()
-        await db.writeAssessments(studentId, data.myStudies)
-        await db.writeCurrentSemester(studentId, data.mySemesterModules)
-        await db.writeEvents(studentId, data.myEventGroups)
-        await db.writeProjects(studentId, data.myProjects)
+        await db.writeAssessments(studentId, await getMyStudies(token, permissions.projects))
+        if (permissions.currentSemester) await db.writeCurrentSemester(studentId, await getCurrentSemester(token))
+        if (permissions.events) await db.writeEvents(studentId, await getEvents(token))
+        if (permissions.projects) await db.writeProjects(studentId, await getProjects(token))
         res.send('ok')
     } catch (err) {
         console.log(con.err, err)
