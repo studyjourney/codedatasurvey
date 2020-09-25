@@ -2,9 +2,9 @@
   "name": "codedatasurvey",
   "version": "1.0.0",
   "description": "This Express Apps goal is to take an Users Code Lerning Plattform API Key, and fetch certain Datasets. After the Data gets anonymized and Stored within a SQL Database.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node ./index.js",
+    "start": "node ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
