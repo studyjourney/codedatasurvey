@@ -1,11 +1,11 @@
 const express = require('express');
 
-// Load config from .env file
-require('dotenv').config();
-
 // Custom Modules
 const con = require('./consolelog');
 const db = require('./db');
+
+// Load config from .env file
+require('dotenv').config();
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -13,6 +13,7 @@ app.use(express.json())
 
 // Static Files
 app.use('/', express.static('static'));
+
 
 /*
 *   Route Handlers
