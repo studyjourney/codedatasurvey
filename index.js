@@ -26,6 +26,10 @@ app.get('/ping', function (req, res) {
     res.status(200).send("pong");
 });
 
+// Visualize and manage the DB data
+const adminRouter = require('./routes/admin')
+app.use('/admin', adminRouter);
+
 //CODE data aquisition API token
 app.post('/codeData', async (req, res) => {
     try {
