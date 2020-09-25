@@ -15,6 +15,7 @@ app.use(express.json())
 /*
 *   Route Handlers
 */
+app.use('/', express.static('static'));
 
 app.get("/", function (req, res) {
     res.render('index');
