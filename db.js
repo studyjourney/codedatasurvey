@@ -69,10 +69,11 @@ const writeAssessments = (studentId, myStudies) => {
             ])
         }
     }
-    return connection.query(assessmentsSql, [assessmentsValues])
+    if (assessmentsValues.length) return connection.query(assessmentsSql, [assessmentsValues])
 }
 
 const writeCurrentSemester = (studentId, mySemesterModules) => {
+    if (!mySemesterModules.length) return
     const currentSemesterSql = `INSERT INTO fs20_modules(
         student_id,
         semester_module_lp_id
@@ -82,6 +83,7 @@ const writeCurrentSemester = (studentId, mySemesterModules) => {
 }
 
 const writeEvents = (studentId, myEventGroups) => {
+    if (!myEventGroups.length) return
     const eventsSql = `INSERT INTO students_event_groups(
         student_id,
         event_group_lp_id
@@ -91,6 +93,7 @@ const writeEvents = (studentId, myEventGroups) => {
 }
 
 const writeProjects = (studentId, myProjects) => {
+    if (!myProjects.length) return
     const projectSql = `INSERT INTO students_projects(
         student_id,
         project_lp_id
