@@ -102,7 +102,74 @@
         
         <div style="position:relative;">
           <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-          <p>Scroll up and down to really get the feeling of how Parallax Scrolling works.</p>
+          <!-- Placeholder functionality-only UI -->
+
+<div id='welcome-div'>
+    <a href='https://app.code.berlin/settings?table=api', target='_blank'>
+        Get your token here
+    </a>
+    <br />
+    <form id='token-form' action='/token'>
+        <label>Token:</label>
+        <br />
+        <input type='password' id='token-input' />
+        <br />
+        I would like to give you the following anonymous data:
+        <br />
+        <input type='checkbox' id='assessments-checkbox' checked disabled /><label>Assessments history</label>
+        <br />
+        <input type='checkbox' id='current-semester-checkbox' checked /><label>Currently enrolled modules</label>
+        <br />
+        <input type='checkbox' id='events-checkbox' checked/><label>Events history</label>
+        <br />
+        <input type='checkbox' id='projects-checkbox' checked/><label>Projects history</label>
+        <br />
+        <input type='submit' value='Submit' />
+    </form>
+</div>
+<div id='sending-div' style='display:none'>
+    Processing...
+</div>
+<div id='success-div' style='display:none'>
+    Thanks!
+</div>
+<div id='error-div' style='display:none'>
+    Oops :(
+</div>
+
+<script type='text/javascript'>
+    const welcomeDiv = document.getElementById('welcome-div')
+    const sendingDiv = document.getElementById('sending-div')
+    const successDiv = document.getElementById('success-div')
+    const errorDiv = document.getElementById('error-div')
+    document.getElementById('token-form').addEventListener('submit', e => {
+        e.preventDefault()
+        welcomeDiv.setAttribute('style', 'display:none')
+        sendingDiv.setAttribute('style', 'display:block')
+        fetch('/codeData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: document.getElementById('token-input').value,
+                permissions: {
+                    currentSemester: document.getElementById('current-semester-checkbox').checked,
+                    events: document.getElementById('events-checkbox').checked,
+                    projects: document.getElementById('projects-checkbox').checked,
+                }
+            }),
+        })
+        .then(res => {
+            if (res.status < 400) successDiv.setAttribute('style', 'display:block')
+            else errorDiv.setAttribute('style', 'display:block')
+        })
+        .catch(() => {
+            errorDiv.setAttribute('style', 'display:block')
+        })
+        .finally(() => {
+            sendingDiv.setAttribute('style', 'display:none')
+        })
+    })
+</script>
           </div>
         </div>
         

@@ -5,10 +5,12 @@ require('dotenv').config();
 
 //Custom Modules
 const con = require('./consolelog');
-db = require('./db');
+const db = require('./db');
+const { getMyStudies, getCurrentSemester, getEvents, getProjects } = require('./codeLearningPlatform');
 
 const app = express();
 app.set('view engine', 'ejs');
+app.use(express.json())
 
 /*
 *   Route Handlers
@@ -24,6 +26,22 @@ app.get('/ping', function (req, res) {
     res.status(200).send("pong");
 });
 
+//CODE data aquisition API token
+app.post('/codeData', async (req, res) => {
+    try {
+        const { token, permissions } = req.body
+        const studentId = await db.newStudent()
+        await db.writeAssessments(studentId, await getMyStudies(token, permissions.projects))
+        if (permissions.currentSemester) await db.writeCurrentSemester(studentId, await getCurrentSemester(token))
+        if (permissions.events) await db.writeEvents(studentId, await getEvents(token))
+        if (permissions.projects) await db.writeProjects(studentId, await getProjects(token))
+        res.send('ok')
+    } catch (err) {
+        console.log(con.err, err)
+        res.status(500).send('error')
+    }
+})
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function (req, res) {
     res.status(404).render('error');
@@ -33,6 +51,9 @@ app.get('*', function (req, res) {
 app.listen(process.env.PORT, function () {
     console.log('\033c')
     console.log(con.wlc);
+    db.connection.ping()
+    .then(() => console.log(con.info + 'Connected to the MySQL server'))
+    .catch(err => console.error(con.err + err))
     console.log(con.info + `Listening on port ${process.env.PORT}`);
 });
 
