@@ -8,116 +8,209 @@
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="fa/css/all.css" rel="stylesheet">
     <script src="js/jquery-3.5.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
     <!-- Favicons -->
 
 
     <!-- Custom styles for this template -->
     <link href="css/main.css" rel="stylesheet">
-        </head>
-        <body>
-        
-        <div class="bgimg-1">
-          <div class="caption">
-          <span class="border">Code Data Survey</span>
-          </div>
-        </div>
-        
-        <div style="color: #777;background-color:white;text-align:center;padding:50px 80px;text-align: justify;">
-          <h3 style="text-align:center;">Help Us!</h3>
-          <p>The Study Journey Project wants to make getting modules easier.</p>
-        </div>
-        
-        
-        <div style="position:relative;">
-          <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-          <!-- Placeholder functionality-only UI -->
+</head>
 
-<div id='welcome-div'>
-    <a href='https://app.code.berlin/settings?table=api', target='_blank'>
-        Get your token here
-    </a>
-    <br />
-    <form id='token-form' action='/token'>
-        <label>Token:</label>
-        <br />
-        <input type='password' id='token-input' />
-        <br />
-        I would like to give you the following anonymous data:
-        <br />
-        <input type='checkbox' id='assessments-checkbox' checked disabled /><label>Assessments history</label>
-        <br />
-        <input type='checkbox' id='current-semester-checkbox' checked /><label>Currently enrolled modules</label>
-        <br />
-        <input type='checkbox' id='events-checkbox' checked/><label>Events history</label>
-        <br />
-        <input type='checkbox' id='projects-checkbox' checked/><label>Projects history</label>
-        <br />
-        <input type='submit' value='Submit' />
-    </form>
-</div>
-<div id='sending-div' style='display:none'>
-    Processing...
-</div>
-<div id='success-div' style='display:none'>
-    Thanks!
-</div>
-<div id='error-div' style='display:none'>
-    Oops :(
-</div>
+<body>
 
-<script type='text/javascript'>
-    const welcomeDiv = document.getElementById('welcome-div')
-    const sendingDiv = document.getElementById('sending-div')
-    const successDiv = document.getElementById('success-div')
-    const errorDiv = document.getElementById('error-div')
-    document.getElementById('token-form').addEventListener('submit', e => {
-        e.preventDefault()
-        welcomeDiv.setAttribute('style', 'display:none')
-        sendingDiv.setAttribute('style', 'display:block')
-        fetch('/codeData', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                token: document.getElementById('token-input').value,
-                permissions: {
-                    currentSemester: document.getElementById('current-semester-checkbox').checked,
-                    events: document.getElementById('events-checkbox').checked,
-                    projects: document.getElementById('projects-checkbox').checked,
-                }
-            }),
-        })
-        .then(res => {
-            if (res.status < 400) successDiv.setAttribute('style', 'display:block')
-            else errorDiv.setAttribute('style', 'display:block')
-        })
-        .catch(() => {
-            errorDiv.setAttribute('style', 'display:block')
-        })
-        .finally(() => {
-            sendingDiv.setAttribute('style', 'display:none')
-        })
-    })
-</script>
-          </div>
+    <div class="bgimg-1">
+        <div class="caption">
+            <span class="border">Code Data Survey</span>
         </div>
-        
-        
-        <div class="bgimg-1">
-          <div class="caption">
-          <span class="border">COOL!</span>
-          </div>
+    </div>
+
+    <div style="color: #777;background-color:white;text-align:center;padding:50px 80px;text-align: justify;">
+        <h3 style="text-align:center;">Help Us!</h3>
+        <p>The Study Journey Project wants to make getting modules easier.</p>
+        <span class=fa-browser" title="icon name" aria-hidden="true"></span>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <span class=fa-target"></span>
+                    Valuable Insights
+                </div>
+                <div class="col-sm">
+                    <span class=fa-people"></span>
+                    Anonymous
+                </div>
+                <div class="col-sm">
+                    <span class=fa-code"></span>
+                    Open Source
+                </div>
+            </div>
         </div>
-    <!-- Footer -->
+    </div>
+
+
+    <div style="position:relative;">
         <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+            <!-- Placeholder functionality-only UI -->
+
+            <div id='welcome-div'>
+
+                <form id='token-form' action='/token'>
+                    <label>Paste your Code Token here:</label>
+                    <div class="form-group">
+                        <div class="input-group mb-2">
+
+                            <input type='password' class="form-control form-control-lg" id='token-input'
+                                aria-describedby="tokenHelp" placeholder="API Token" />
+                            <div class="input-group-append">
+                                <a class="btn btn-info iconbutton" type="button"
+                                    href='https://app.code.berlin/settings?table=api' target='_blank'
+                                    data-toggle="tooltip" data-placement="left" title="Get your token at C<>de">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <small id="tokenHelp" class="form-text text-muted">
+                            The token is valid for 10 Minutes only. We don't save your token. All data gathered gets
+                            anonymized. </small>
+
+                    </div>
+                    <div class="form-group">
+                        I would like to give you the following anonymous data:
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="assessments-checkbox"
+                                aria-describedby="assessmentHelp" checked disabled>
+                            <label class="form-check-label" for="assessments-checkbox">Assessments History</label>
+                            <small id="assessmentHelp" class="form-text text-muted">
+                                We will gather all your Past assessments including grades and comments made by the
+                                professors. <a href="https://github.com/studyjourney/codedatasurvey" target="_blank"
+                                    data-toggle="tooltip" data-placement="right" title="See the query"><i
+                                        class="text-info far fa-question-circle"></i></a></small>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="current-semester-checkbox"
+                                aria-describedby="currentSemesterHelp" checked>
+                            <label class="form-check-label" for="current-semester-checkbox">Currently enrolled
+                                modules</label>
+                            <small id="currentSemesterHelp" class="form-text text-muted">
+                                We will gather all your Past assessments including grades and comments made by the
+                                professors. <a href="https://github.com/studyjourney/codedatasurvey" target="_blank"
+                                    data-toggle="tooltip" data-placement="right" title="See the query"><i
+                                        class="text-info far fa-question-circle"></i></a></small>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="events-checkbox"
+                                aria-describedby="eventhistHelp" checked>
+                            <label class="form-check-label" for="events-checkbox">Events history</label>
+                            <small id="eventhistHelp" class="form-text text-muted">
+                                We will gather all your Past assessments including grades and comments made by the
+                                professors. <a href="https://github.com/studyjourney/codedatasurvey" target="_blank"
+                                    data-toggle="tooltip" data-placement="right" title="See the query"><i
+                                        class="text-info far fa-question-circle"></i></a></small>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="projects-checkbox"
+                                aria-describedby="projectsHelp" checked>
+                            <label class="form-check-label" for="projects-checkbox">Projects history</label>
+                            <small id="projectsHelp" class="form-text text-muted">
+                                We will gather all your Past assessments including grades and comments made by the
+                                professors. <a href="https://github.com/studyjourney/codedatasurvey" target="_blank"
+                                    data-toggle="tooltip" data-placement="right" title="See the query"><i
+                                        class="text-info far fa-question-circle"></i></a></small>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <input class="btn btn-primary btn-lg btn-block" type='submit' value='Submit' />
+                    </div>
+
+                </form>
+            </div>
+            <div id='sending-div' style='display:none'>
+                <!-- Currently Processing the request-->
+                <div class="text-center">
+                    <div class="spinner-border m-5" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id='success-div' style='display:none'>
+                <!-- Survey Done -->
+                <div class="text-center">
+                    <i class="text-success far fa-check-circle" style="font-size: 5rem;"></i>
+                </div>
+            </div>
+            <div id='error-div' style='display:none'>
+                <!-- Survey error-->
+
+<div class="row">
+                <div class="col-md-6 my-auto text-center">
+                    <i class="text-danger far fa-times-circle" style="font-size: 5rem;"></i>
+                    <button class="btn btn-primary" onClick="window.location.reload();">Try Again</button>
+                </div>
+            </div>
+            </div>
+
+            <script type='text/javascript'>
+                const welcomeDiv = document.getElementById('welcome-div')
+                const sendingDiv = document.getElementById('sending-div')
+                const successDiv = document.getElementById('success-div')
+                const errorDiv = document.getElementById('error-div')
+                document.getElementById('token-form').addEventListener('submit', e => {
+                    e.preventDefault()
+                    welcomeDiv.setAttribute('style', 'display:none')
+                    sendingDiv.setAttribute('style', 'display:block')
+                    fetch('/codeData', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: document.getElementById('token-input').value,
+                            permissions: {
+                                currentSemester: document.getElementById('current-semester-checkbox').checked,
+                                events: document.getElementById('events-checkbox').checked,
+                                projects: document.getElementById('projects-checkbox').checked,
+                            }
+                        }),
+                    })
+                        .then(res => {
+                            if (res.status < 400) successDiv.setAttribute('style', 'display:block')
+                            else errorDiv.setAttribute('style', 'display:block')
+                        })
+                        .catch(() => {
+                            errorDiv.setAttribute('style', 'display:block')
+                        })
+                        .finally(() => {
+                            sendingDiv.setAttribute('style', 'display:none')
+                        })
+                })
+
+            </script>
+        </div>
+    </div>
+
+
+    <div class="bgimg-1">
+        <div class="caption">
+            <span class="border">COOL!</span>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
 
         <p>Code Student Data Survey</p>
         <p>
             <a href="#">Study Journey Team</a> - Copyright 2020
         </p>
-        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 
 </body>
 
