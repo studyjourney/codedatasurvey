@@ -1,5 +1,6 @@
 const util = require( 'util' );
 const mysql = require('mysql');
+const { NameAnonymizer } = require('./anonymization');
 require('dotenv').config();
 
 const mysqlConnection = mysql.createConnection({
@@ -22,7 +23,7 @@ const newStudent = async () => {
     return studentId
 }
 
-const writeAssessments = (studentId, myStudies) => {
+const writeAssessments = async (studentId, myStudies) => {
     const assessmentsSql = `INSERT INTO assessments(
         student_id,
         module_short_code,
@@ -41,6 +42,7 @@ const writeAssessments = (studentId, myStudies) => {
         semester_module_lp_id
     ) VALUES ?;`
     const assessmentsValues = []
+    const anonymizer = new NameAnonymizer(await getNames())
     for (const module of myStudies) {
         const { shortCode, assessments } = module
         for (const assessment of assessments) {
@@ -59,8 +61,8 @@ const writeAssessments = (studentId, myStudies) => {
                 assessment.proposalText,
                 assessment.grade,
                 assessment.assessmentProtocol,
-                assessment.internalNotes,
-                assessment.externalFeedback,
+                anonymizer.anonymizeAllNamesInText(assessment.internalNotes),
+                anonymizer.anonymizeAllNamesInText(assessment.externalFeedback),
                 assessment.attempt,
                 assessment.earlyAssessmentProposal,
                 assessment.assessmentType,
@@ -69,7 +71,7 @@ const writeAssessments = (studentId, myStudies) => {
             ])
         }
     }
-    if (assessmentsValues.length) return connection.query(assessmentsSql, [assessmentsValues])
+    if (assessmentsValues.length) return await connection.query(assessmentsSql, [assessmentsValues])
 }
 
 const writeCurrentSemester = (studentId, mySemesterModules) => {
@@ -100,6 +102,12 @@ const writeProjects = (studentId, myProjects) => {
     ) VALUES ?`
     const projectsValues = myProjects.map(project => [studentId, project.id])
     return connection.query(projectSql, [projectsValues])
+}
+
+const getNames = async () => {
+    const sql = 'SELECT * FROM code_user_names'
+    const rows = await connection.query(sql)
+    return rows.map(row => row.name)
 }
 
 module.exports = {
