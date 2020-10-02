@@ -19,12 +19,10 @@ app.use('/', express.static('static'));
 *   Route Handlers
 */
 const indexRouter = require('./routes/index')
-const adminRouter = require('./routes/admin') // WIP
 const pingRouter = require('./routes/ping')
 const codeDataRouter = require('./routes/codeData')
 
 app.use('/', indexRouter);
-app.use('/admin', adminRouter);
 app.use('/ping', pingRouter);
 app.use('/codeData', codeDataRouter);
 
