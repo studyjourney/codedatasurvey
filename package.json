@@ -1,6 +1,9 @@
 {
   "name": "codedatasurvey",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.x"
+  },
   "description": "This Express Apps goal is to take an Users Code Lerning Plattform API Key, and fetch certain Datasets. After the Data gets anonymized and Stored within a SQL Database.",
   "main": "app.js",
   "scripts": {
