@@ -6,7 +6,26 @@ const request = async (token, query) => {
         { query: query },
         { headers: { Authorization: token } }
     )
+    if (response.data.errors) {
+        const err = new Error('CODE GraphQL Error')
+        err.errors = response.data.errors
+        throw err
+    }
     return response.data.data
+}
+
+const tokenIsValid = async (token) => {
+    // This query could be any valid query
+    const query = `query {
+        underMaintanance
+    }`
+    try{
+        await request(token, query)
+        return true
+    } catch (e) {
+        if (e.errors[0].message.substring(0, 4).toLowerCase() === 'auth') return false
+        throw e
+    }
 }
 
 const getMyStudies = async (token, getProjects=false) => {
@@ -69,6 +88,7 @@ const getProjects = async token => {
 }
 
 module.exports = {
+    tokenIsValid,
     getMyStudies,
     getCurrentSemester,
     getEvents,
