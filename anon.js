@@ -31,10 +31,11 @@ async function replaceExistingNames() {
     const assmNotes = await getAssmNotes()
     var usedNames = [];
 
+    // console.log(assmNotes[151].internal.toLowerCase().replace(/\n/g, " ").split(" "))
     for (var x in assmNotes) {
         for (var i in userNames) {
             try {
-                if (assmNotes[152].internal.toLowerCase().split(" ").includes(userNames[i]) || assmNotes[152].internal.toLowerCase().split(" ").includes(userNames[i])) {
+                if (assmNotes[x].internal.toLowerCase().replace(/\n/g, " ").split(" ").includes(userNames[i]) || assmNotes[x].internal.toLowerCase().replace(/\n/g, " ").split(" ").includes(userNames[i])) {
                     console.log(userNames[i])
                 }
             } catch (err) {
@@ -45,19 +46,6 @@ async function replaceExistingNames() {
         }
     }
 
-    // var splitNotes = []
-    // for (var i in assmNotes) {
-    //     var notes = []
-    //     try {
-    //         notes.push(assmNotes[i].internal.toLowerCase().split(" "))
-    //         notes.push(assmNotes[i].external.toLowerCase().split(" "))
-    //         splitNotes.push(notes)
-    //     } catch (err) {
-    //         if (!err instanceof TypeError) {
-    //             console.log(err)
-    //         }
-    //     }
-    // }
 
     // console.log(splitNotes[0])
     // console.log(userNames[0])
