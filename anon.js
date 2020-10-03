@@ -26,26 +26,27 @@ async function getAssmNotes() {
 async function replaceNewNames() {
 }
 
+// Retroactively fix all non-censored names in the database. (03.10.2020)
 async function replaceExistingNames() {
     const userNames = await getNameList()
     const assmNotes = await getAssmNotes()
     var usedNames = [];
 
-    // console.log(assmNotes[151].internal.toLowerCase().replace(/\n/g, " ").split(" "))
+    // Every set of assessment notes
     for (var x in assmNotes) {
         for (var i in userNames) {
-            try {
-                if (assmNotes[x].internal.toLowerCase().replace(/\n/g, " ").split(" ").includes(userNames[i]) || assmNotes[x].internal.toLowerCase().replace(/\n/g, " ").split(" ").includes(userNames[i])) {
-                    console.log(userNames[i])
-                }
-            } catch (err) {
-                if (!err instanceof TypeError) {
-                    console.log(err)
-                }
+            if (!assmNotes[x].internal && !assmNotes[x].external) {
+                break
+            } else if (!assmNotes[x].external) {
+                lfnInternal(userNames[i], assmNotes[x].internal)
+            } else if (!assmNotes[x].internal) {
+                lfnExternal(userNames[i], assmNotes[x].external)
+            } else {
+                lfnInternal(userNames[i], assmNotes[x].internal)
+                lfnExternal(userNames[i], assmNotes[x].external)
             }
         }
     }
-
 
     // console.log(splitNotes[0])
     // console.log(userNames[0])
@@ -53,7 +54,19 @@ async function replaceExistingNames() {
 
 }
 
+// lfn = look for names
+function lfnInternal(userName, internalNotes) {
+    if (internalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
+        console.log(userName)
+    }
+}
 
+
+function lfnExternal(userName, externalNotes) {
+    if (externalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
+        console.log(userName)
+    }
+}
 
 module.exports = {
     replaceNewNames,
