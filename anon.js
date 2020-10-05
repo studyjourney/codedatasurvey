@@ -38,12 +38,12 @@ async function replaceExistingNames() {
             if (!assmNotes[x].internal && !assmNotes[x].external) {
                 break
             } else if (!assmNotes[x].external) {
-                lfnInternal(userNames[i], assmNotes[x].internal)
+                lookForNamesInternal(userNames[i], assmNotes[x].internal)
             } else if (!assmNotes[x].internal) {
-                lfnExternal(userNames[i], assmNotes[x].external)
+                lookForNamesExternal(userNames[i], assmNotes[x].external)
             } else {
-                lfnInternal(userNames[i], assmNotes[x].internal)
-                lfnExternal(userNames[i], assmNotes[x].external)
+                lookForNamesInternal(userNames[i], assmNotes[x].internal)
+                lookForNamesExternal(userNames[i], assmNotes[x].external)
             }
         }
     }
@@ -54,17 +54,16 @@ async function replaceExistingNames() {
 
 }
 
-// lfn = look for names
-function lfnInternal(userName, internalNotes) {
+function lookForNamesInternal(userName, internalNotes) {
     if (internalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
-        console.log(userName)
+        return userName
     }
 }
 
 
-function lfnExternal(userName, externalNotes) {
+function lookForNamesExternal(userName, externalNotes) {
     if (externalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
-        console.log(userName)
+        return userName
     }
 }
 
