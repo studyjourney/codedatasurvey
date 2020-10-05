@@ -9,7 +9,7 @@ async function getNameList() {
     return nameList
 }
 
-async function getAssmNotes() {
+async function getAssessmentNotes() {
     const getNotes = await connection.query('SELECT external_notes, internal_notes FROM assessments')
     var notesList = []
     for (var i in getNotes) {
@@ -28,48 +28,47 @@ async function replaceNewNames() {
 
 // Retroactively fix all non-censored names in the database. (03.10.2020)
 async function replaceExistingNames() {
-    const userNames = await getNameList()
-    const assmNotes = await getAssmNotes()
+    const userNameList = await getNameList()
+    const assessmentNoteList = await getAssessmentNotes()
 
     // Every set of assessment notes
-    for (var x in assmNotes) {
-        var usedNames = [];
-        for (var i in userNames) {
-            if (!assmNotes[x].internal && !assmNotes[x].external) {
-                break
-            } else if (!assmNotes[x].external) {
-                usedNames.pushIfExists(lookForNamesInternal(userNames[i], assmNotes[x].internal))
-            } else if (!assmNotes[x].internal) {
-                usedNames.pushIfExists(lookForNamesExternal(userNames[i], assmNotes[x].external))
-            } else {
-                usedNames.pushIfExists(lookForNamesInternal(userNames[i], assmNotes[x].internal))
-                usedNames.pushIfExists(lookForNamesExternal(userNames[i], assmNotes[x].external))
-            }
+    for (var x in assessmentNoteList) {
+
+        usedNames = listNamesInText(assessmentNoteList[x], userNameList);
+
+        if (usedNames.length > 0) {
+            console.log(usedNames)
         }
-        console.log(usedNames)
     }
-
-    // console.log(splitNotes[0])
-    // console.log(userNames[0])
-    // console.log(assmNotes[0].internal)
-
 }
 
-function lookForNamesInternal(userName, internalNotes) {
-    if (internalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
+function listNamesInText(assessmentNotes, userNameList) {
+    var usedNames = [];
+
+    for (var i in userNameList) {
+        if (!assessmentNotes.internal && !assessmentNotes.external) {
+            break
+        } else if (!assessmentNotes.external) {
+            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.internal))
+        } else if (!assessmentNotes.internal) {
+            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.external))
+        } else {
+            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.internal))
+            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.external))
+        }
+    }
+    return usedNames
+}
+
+function lookForNames(userName, notes) {
+    if (notes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
         return userName
     }
 }
 
-
-function lookForNamesExternal(userName, externalNotes) {
-    if (externalNotes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
-        return userName
-    }
-}
 
 // Custom push method that only pushes if the passed item is not null or false
-Array.prototype.pushIfExists = function(element) {
+Array.prototype.pushIfExists = function (element) {
     if (element) {
         this.push(element)
         return true;
