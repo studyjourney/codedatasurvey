@@ -1,8 +1,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/fav/android-chrome-512x512.png">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/studyjourney/codedatasurvey">
+    <img src="https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/fav/android-chrome-512x512.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Study Journey Data Survey</h3>
@@ -35,7 +35,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Data Survey Screen Shot][screenshot]](https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/img/main.png)
+![Data Survey Screen Shot](https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/img/main.png)
 
 The Study Journey Project wants to help you passing code modules easier. The first step of our project is to gain more knowledge on the current situation. This will help us to provide resources and methods more meaningful for everyone.
 
