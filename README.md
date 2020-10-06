@@ -1,16 +1,7 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/studyjourney/codedatasurvey/blob/master/static/fav/android-chrome-512x512.png">
+  <a href="https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/fav/android-chrome-512x512.png">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -44,7 +35,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Data Survey Screen Shot][screenshot]](https://github.com/studyjourney/codedatasurvey/blob/master/static/img/main.png)
+[![Data Survey Screen Shot][screenshot]](https://raw.githubusercontent.com/studyjourney/codedatasurvey/master/static/img/main.png)
 
 The Study Journey Project wants to help you passing code modules easier. The first step of our project is to gain more knowledge on the current situation. This will help us to provide resources and methods more meaningful for everyone.
 
