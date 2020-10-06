@@ -33,12 +33,23 @@ async function replaceExistingNames() {
 
     // Every set of assessment notes
     for (var x in assessmentNoteList) {
+        var assessmentNotes = assessmentNoteList[151]
 
-        usedNames = listNamesInText(assessmentNoteList[x], userNameList);
-
-        if (usedNames.length > 0) {
-            console.log(usedNames)
+        var usedNames = listNamesInText(assessmentNotes, userNameList);
+        var fixedInternalNotes = assessmentNotes.internal
+        var fixedExternalNotes = assessmentNotes.external
+        for (var i in usedNames) {
+            var replaceWord = `Person${+i + +1}`
+            var regExpName = new RegExp('(' + usedNames[i] + ')', 'gi')
+            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
+            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
         }
+        console.log(fixedInternalNotes)
+        console.log(fixedExternalNotes)
+
+        // if (usedNames.length > 0) {
+        //     console.log(usedNames)
+        // }
     }
 }
 
@@ -47,7 +58,7 @@ function listNamesInText(assessmentNotes, userNameList) {
 
     for (var i in userNameList) {
         if (!assessmentNotes.internal && !assessmentNotes.external) {
-            break
+            return []
         } else if (!assessmentNotes.external) {
             usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.internal))
         } else if (!assessmentNotes.internal) {
