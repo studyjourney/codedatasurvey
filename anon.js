@@ -31,9 +31,9 @@ async function replaceExistingNames() {
     const userNameList = await getNameList()
     const assessmentNoteList = await getAssessmentNotes()
 
-    // Every set of assessment notes
+    // Every set of assessment notes in db
     for (var x in assessmentNoteList) {
-        var assessmentNotes = assessmentNoteList[151]
+        var assessmentNotes = assessmentNoteList[x]
 
         var usedNames = listNamesInText(assessmentNotes, userNameList);
         var fixedInternalNotes = assessmentNotes.internal
@@ -41,18 +41,24 @@ async function replaceExistingNames() {
         for (var i in usedNames) {
             var replaceWord = `Person${+i + +1}`
             var regExpName = new RegExp('(' + usedNames[i] + ')', 'gi')
-            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
-            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+            // I feel like this can be cleaner
+            if (!assessmentNotes.internal && !assessmentNotes.external) {
+            } else if (!assessmentNotes.external) {
+                fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
+            } else if (!assessmentNotes.internal) {
+                fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+            } else {
+                fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
+                fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+            }
         }
-        console.log(fixedInternalNotes)
-        console.log(fixedExternalNotes)
-
-        // if (usedNames.length > 0) {
-        //     console.log(usedNames)
-        // }
+        assessmentNotes.internal = fixedInternalNotes
+        assessmentNotes.external = fixedExternalNotes
     }
+    return assessmentNoteList
 }
 
+// References list of usernames against the notes and returns a list of all ocurring names
 function listNamesInText(assessmentNotes, userNameList) {
     var usedNames = [];
 
