@@ -22,40 +22,53 @@ async function getAssessmentNotes() {
 }
 
 
-
-async function replaceNewNames() {
+// maybe other names would be smarter
+// Returns anonymized Assessment Notes
+async function notesAnonymizer(internal_notes, external_notes) {
+    const userNameList = await getNameList()
+    var assessmentNotes = {
+        internal: internal_notes,
+        external: external_notes
+    }
+    return replaceNamesInNotes(assessmentNotes, userNameList)
 }
 
-// Retroactively fix all non-censored names in the database. (03.10.2020)
-async function replaceExistingNames() {
+// maybe other names would be smarter
+// Retroactively anonymize all non-censored names in the database.
+async function retroactiveNotesAnonymizer() {
     const userNameList = await getNameList()
     const assessmentNoteList = await getAssessmentNotes()
 
     // Every set of assessment notes in db
     for (var x in assessmentNoteList) {
         var assessmentNotes = assessmentNoteList[x]
-
-        var usedNames = listNamesInText(assessmentNotes, userNameList);
-        var fixedInternalNotes = assessmentNotes.internal
-        var fixedExternalNotes = assessmentNotes.external
-        for (var i in usedNames) {
-            var replaceWord = `Person${+i + +1}`
-            var regExpName = new RegExp('(' + usedNames[i] + ')', 'gi')
-            // I feel like this can be cleaner
-            if (!assessmentNotes.internal && !assessmentNotes.external) {
-            } else if (!assessmentNotes.external) {
-                fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
-            } else if (!assessmentNotes.internal) {
-                fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
-            } else {
-                fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
-                fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
-            }
-        }
-        assessmentNotes.internal = fixedInternalNotes
-        assessmentNotes.external = fixedExternalNotes
+        assessmentNoteList[x] = replaceNamesInNotes(assessmentNotes, userNameList)
     }
     return assessmentNoteList
+}
+
+function replaceNamesInNotes(assessmentNotes, userNameList) {
+    var usedNames = listNamesInText(assessmentNotes, userNameList);
+    var fixedInternalNotes = assessmentNotes.internal
+    var fixedExternalNotes = assessmentNotes.external
+    for (var i in usedNames) {
+        var replaceWord = `Person${+i + +1}`
+        var regExpName = new RegExp('(' + usedNames[i] + ')', 'gi')
+        // I feel like this can be cleaner
+        if (!assessmentNotes.internal && !assessmentNotes.external) {
+        } else if (!assessmentNotes.external) {
+            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
+        } else if (!assessmentNotes.internal) {
+            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+        } else {
+            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
+            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+        }
+    }
+    assessmentNotes.internal = fixedInternalNotes
+    assessmentNotes.external = fixedExternalNotes
+
+    return assessmentNotes
 }
 
 // References list of usernames against the notes and returns a list of all ocurring names
@@ -94,6 +107,6 @@ Array.prototype.pushIfExists = function (element) {
 }
 
 module.exports = {
-    replaceNewNames,
-    replaceExistingNames
+    notesAnonymizer,
+    retroactiveNotesAnonymizer
 };
