@@ -9,7 +9,7 @@ async function getNameList() {
     return nameList
 }
 
-async function getAssessmentNotes() {
+async function getExistingAssessmentNotes() {
     const getNotes = await connection.query('SELECT external_notes, internal_notes FROM assessments')
     var notesList = []
     for (var i in getNotes) {
@@ -37,7 +37,7 @@ async function notesAnonymizer(internal_notes, external_notes) {
 // Retroactively anonymize all non-censored names in the database.
 async function retroactiveNotesAnonymizer() {
     const userNameList = await getNameList()
-    const assessmentNoteList = await getAssessmentNotes()
+    const assessmentNoteList = await getExistingAssessmentNotes()
 
     // Every set of assessment notes in db
     for (var x in assessmentNoteList) {
