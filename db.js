@@ -1,5 +1,6 @@
 const util = require('util');
 const mysql = require('mysql');
+const con = require('./consolelog');
 require('dotenv').config();
 
 var db_config = {
