@@ -1,23 +1,17 @@
 const { connection } = require('./db')
 
 async function getNameList() {
-    const getNames = await connection.query('SELECT * FROM code_user_names')
-    let nameList = []
-    for (const dbName of getNames) {
-        nameList.push(dbName.name)
-    }
+    const dbNames = await connection.query('SELECT * FROM code_user_names')
+    let nameList = dbNames.map(dbName => dbName.name)
     return nameList
 }
 
 async function getExistingAssessmentNotes() {
-    const getNotes = await connection.query('SELECT external_notes, internal_notes FROM assessments')
-    let notesList = []
-    for (const notes of getNotes) {
-        notesList.push({
-            internal: notes.internal_notes,
-            external: notes.external_notes
-        })
-    }
+    const dbNotes = await connection.query('SELECT external_notes, internal_notes FROM assessments')
+    let notesList = dbNotes.map(dbNote => ({
+        internal: dbNote.internal_notes,
+        external: dbNote.external_notes
+    }))
     return notesList
 }
 
