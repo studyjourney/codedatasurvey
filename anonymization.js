@@ -16,41 +16,69 @@ async function getExistingAssessmentNotes() {
 }
 
 
-// maybe other names would be smarter
 // Returns anonymized Assessment Notes
-async function notesAnonymizer(internalNotes, externalNotes) {
+async function notesAnonymizer(userAssessmentList) {
     const userNameList = await getNameList()
-    let assessmentNotes = {
-        internal: internalNotes,
-        external: externalNotes
+    let reservedIDs = {}
+
+    for (let userAssessment of userAssessmentList) {
+        const assessmentNotes = {
+            internal: userAssessment.internalNotes,
+            external: userAssessment.externalFeedback
+        }
+
+        const anonymizedNotes = replaceNamesInNotes(assessmentNotes, userNameList, reservedIDs)
+        userAssessment.internalNotes = anonymizedNotes.assessmentNotes.internal
+        userAssessment.externalFeedback = anonymizedNotes.assessmentNotes.external
+
+        reservedIDs = Object.assign({}, reservedIDs, anonymizedNotes.reservedIDs)
+
     }
-    return replaceNamesInNotes(assessmentNotes, userNameList)
+    return userAssessmentList
 }
 
-// maybe other names would be smarter
 // Retroactively anonymize all non-censored names in the database.
 async function retroactiveNotesAnonymizer() {
     const userNameList = await getNameList()
     const assessmentNoteList = await getExistingAssessmentNotes()
+    let reservedIDs = {}
 
     // Every set of assessment notes in db
     for (let assessmentNotes of assessmentNoteList) {
-        assessmentNotes = replaceNamesInNotes(assessmentNotes, userNameList)
+        const anonymizedNotes = replaceNamesInNotes(assessmentNotes, userNameList, reservedIDs)
+        assessmentNotes = anonymizedNotes.assessmentNotes
+        reservedIDs = Object.assign({}, reservedIDs, anonymizedNotes.reservedIDs)
     }
     return assessmentNoteList
 }
 
-function replaceNamesInNotes(assessmentNotes, userNameList) {
+function replaceNamesInNotes(assessmentNotes, userNameList, reservedIDs) {
     let usedNamesList = listNamesInText(assessmentNotes, userNameList);
     let anonymizedInternalNotes = assessmentNotes.internal
     let anonymizedExternalNotes = assessmentNotes.external
 
+    // Also do some other time.
+    // if (isFullName(anonymizedInternalNotes, usedNamesList)) {
+    // }
 
+    for (const usedNameDict of usedNamesList) {
+        usedName = usedNameDict.name
+        let replaceWord;
 
-    for (const usedName of usedNamesList) {
-        const replaceWord = `Person${+usedNamesList.indexOf(usedName) + +1}`
-        const regExpName = new RegExp('(' + usedName.name + ')', 'gi')
-        // I feel like this can be cleaner (case)
+        if (reservedIDs.hasOwnProperty(usedName)) {
+            replaceWord = 'Person' + reservedIDs[usedName]
+        }
+        else {
+            let userID = Math.floor(Math.random() * 100) + 1
+            while (Object.keys(reservedIDs).some((key) => { return reservedIDs[key] === userID; })) {
+                userID = Math.floor(Math.random() * 100) + 1
+            }
+            reservedIDs[usedName] = userID
+            replaceWord = 'Person' + userID
+        }
+        const regExpName = new RegExp("\\b" + usedName + "\\b", "gi")
+
+        // I feel like this can be cleaner (switch)
         if (!anonymizedInternalNotes && !anonymizedExternalNotes) {
         } else if (!anonymizedExternalNotes) {
             anonymizedInternalNotes = anonymizedInternalNotes.replace(regExpName, replaceWord)
@@ -64,7 +92,7 @@ function replaceNamesInNotes(assessmentNotes, userNameList) {
     assessmentNotes.internal = anonymizedInternalNotes
     assessmentNotes.external = anonymizedExternalNotes
 
-    return assessmentNotes
+    return {assessmentNotes: assessmentNotes, reservedIDs: reservedIDs}
 }
 
 // References list of usernames against the notes and returns a list of all ocurring names
@@ -90,10 +118,16 @@ function lookForNames(userName, notes) {
     let notesAsWordList = notes.toLowerCase().replace(".", " ").replace(",", " ").replace(/\n/g, " ").split(" ")
 
     if (notesAsWordList.includes(userName)) {
-        return {name: userName, indexInStr: notes.toLowerCase().indexOf(userName), indexInArr: notesAsWordList.indexOf(userName)}
+        return { name: userName, indexInStr: notes.toLowerCase().indexOf(userName), indexInArr: notesAsWordList.indexOf(userName) }
     }
 }
 
+// Do some other time.
+// function isFullName(notes, usedNames) {
+//     if (!usedNames.lenght) {}
+//     console.log(usedNames);
+//     usedNames.indexInArr.sort(a,b => console.log(a, b))
+// }
 
 // Custom push method that only pushes if the passed item is not null or false
 Array.prototype.pushIfExists = function (element) {
