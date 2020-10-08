@@ -2,20 +2,20 @@ const { connection } = require('./db')
 
 async function getNameList() {
     const getNames = await connection.query('SELECT * FROM code_user_names')
-    var nameList = []
-    for (var i in getNames) {
-        nameList.push(getNames[i].name)
+    let nameList = []
+    for (const dbName of getNames) {
+        nameList.push(dbName.name)
     }
     return nameList
 }
 
 async function getExistingAssessmentNotes() {
     const getNotes = await connection.query('SELECT external_notes, internal_notes FROM assessments')
-    var notesList = []
-    for (var i in getNotes) {
+    let notesList = []
+    for (const notes of getNotes) {
         notesList.push({
-            internal: getNotes[i].internal_notes,
-            external: getNotes[i].external_notes
+            internal: notes.internal_notes,
+            external: notes.external_notes
         })
     }
     return notesList
@@ -26,7 +26,7 @@ async function getExistingAssessmentNotes() {
 // Returns anonymized Assessment Notes
 async function notesAnonymizer(internalNotes, externalNotes) {
     const userNameList = await getNameList()
-    var assessmentNotes = {
+    let assessmentNotes = {
         internal: internalNotes,
         external: externalNotes
     }
@@ -40,62 +40,63 @@ async function retroactiveNotesAnonymizer() {
     const assessmentNoteList = await getExistingAssessmentNotes()
 
     // Every set of assessment notes in db
-    for (var x in assessmentNoteList) {
-        var assessmentNotes = assessmentNoteList[x]
-        assessmentNoteList[x] = replaceNamesInNotes(assessmentNotes, userNameList)
+    for (let assessmentNotes of assessmentNoteList) {
+        assessmentNotes = replaceNamesInNotes(assessmentNotes, userNameList)
     }
     return assessmentNoteList
 }
 
 function replaceNamesInNotes(assessmentNotes, userNameList) {
-    var usedNames = listNamesInText(assessmentNotes, userNameList);
-    var fixedInternalNotes = assessmentNotes.internal
-    var fixedExternalNotes = assessmentNotes.external
-    for (var i in usedNames) {
-        var replaceWord = `Person${+i + +1}`
-        var regExpName = new RegExp('(' + usedNames[i] + ')', 'gi')
-        // I feel like this can be cleaner
-        if (!assessmentNotes.internal && !assessmentNotes.external) {
-        } else if (!assessmentNotes.external) {
-            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
-        } else if (!assessmentNotes.internal) {
-            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+    let usedNamesList = listNamesInText(assessmentNotes, userNameList);
+    let anonymizedInternalNotes = assessmentNotes.internal
+    let anonymizedExternalNotes = assessmentNotes.external
+
+
+
+    for (const usedName of usedNamesList) {
+        const replaceWord = `Person${+usedNamesList.indexOf(usedName) + +1}`
+        const regExpName = new RegExp('(' + usedName.name + ')', 'gi')
+        // I feel like this can be cleaner (case)
+        if (!anonymizedInternalNotes && !anonymizedExternalNotes) {
+        } else if (!anonymizedExternalNotes) {
+            anonymizedInternalNotes = anonymizedInternalNotes.replace(regExpName, replaceWord)
+        } else if (!anonymizedInternalNotes) {
+            fixedExternalNotes = anonymizedExternalNotes.replace(regExpName, replaceWord)
         } else {
-            fixedInternalNotes = fixedInternalNotes.replace(regExpName, replaceWord)
-            fixedExternalNotes = fixedExternalNotes.replace(regExpName, replaceWord)
+            anonymizedInternalNotes = anonymizedInternalNotes.replace(regExpName, replaceWord)
+            anonymizedExternalNotes = anonymizedExternalNotes.replace(regExpName, replaceWord)
         }
     }
-    assessmentNotes.internal = fixedInternalNotes
-    assessmentNotes.external = fixedExternalNotes
+    assessmentNotes.internal = anonymizedInternalNotes
+    assessmentNotes.external = anonymizedExternalNotes
 
     return assessmentNotes
 }
 
 // References list of usernames against the notes and returns a list of all ocurring names
 function listNamesInText(assessmentNotes, userNameList) {
-    var usedNames = [];
+    let usedNames = [];
 
-    for (let i in userNameList) {
+    for (const userName of userNameList) {
         if (!assessmentNotes.internal && !assessmentNotes.external) {
             return []
         } else if (!assessmentNotes.external) {
-            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.internal))
+            usedNames.pushIfExists(lookForNames(userName, assessmentNotes.internal))
         } else if (!assessmentNotes.internal) {
-            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.external))
+            usedNames.pushIfExists(lookForNames(userName, assessmentNotes.external))
         } else {
-            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.internal))
-            usedNames.pushIfExists(lookForNames(userNameList[i], assessmentNotes.external))
+            usedNames.pushIfExists(lookForNames(userName, assessmentNotes.internal))
+            usedNames.pushIfExists(lookForNames(userName, assessmentNotes.external))
         }
     }
     return usedNames
 }
 
 function lookForNames(userName, notes) {
-    var notesAsWordList = notes.toLowerCase().replace(",", " ").replace(/\n/g, " ").split(" ")
+    let notesAsWordList = notes.toLowerCase().replace(".", " ").replace(",", " ").replace(/\n/g, " ").split(" ")
 
     if (notesAsWordList.includes(userName)) {
-        //console.log(userName, notes.indexOf(userName))
-        return userName
+        return {name: userName, indexInStr: notes.toLowerCase().indexOf(userName), indexInArr: notesAsWordList.indexOf(userName)}
     }
 }
 
