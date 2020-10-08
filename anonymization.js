@@ -24,11 +24,11 @@ async function getExistingAssessmentNotes() {
 
 // maybe other names would be smarter
 // Returns anonymized Assessment Notes
-async function notesAnonymizer(internal_notes, external_notes) {
+async function notesAnonymizer(internalNotes, externalNotes) {
     const userNameList = await getNameList()
     var assessmentNotes = {
-        internal: internal_notes,
-        external: external_notes
+        internal: internalNotes,
+        external: externalNotes
     }
     return replaceNamesInNotes(assessmentNotes, userNameList)
 }
@@ -75,7 +75,7 @@ function replaceNamesInNotes(assessmentNotes, userNameList) {
 function listNamesInText(assessmentNotes, userNameList) {
     var usedNames = [];
 
-    for (var i in userNameList) {
+    for (let i in userNameList) {
         if (!assessmentNotes.internal && !assessmentNotes.external) {
             return []
         } else if (!assessmentNotes.external) {
@@ -91,7 +91,10 @@ function listNamesInText(assessmentNotes, userNameList) {
 }
 
 function lookForNames(userName, notes) {
-    if (notes.toLowerCase().replace(/\n/g, " ").split(" ").includes(userName)) {
+    var notesAsWordList = notes.toLowerCase().replace(",", " ").replace(/\n/g, " ").split(" ")
+
+    if (notesAsWordList.includes(userName)) {
+        //console.log(userName, notes.indexOf(userName))
         return userName
     }
 }
@@ -105,6 +108,9 @@ Array.prototype.pushIfExists = function (element) {
     }
     return false;
 }
+Object.defineProperty(Array.prototype, 'pushIfExists', {
+    enumerable: false
+});
 
 module.exports = {
     notesAnonymizer,
