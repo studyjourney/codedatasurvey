@@ -1,13 +1,35 @@
-const util = require( 'util' );
+const util = require('util');
 const mysql = require('mysql');
+const con = require('./consolelog');
 require('dotenv').config();
 
-const mysqlConnection = mysql.createConnection({
+var db_config = {
     host: process.env.DB_HOST,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
-});
+};
+var mysqlConnection;
+function handleDisconnect() {
+    mysqlConnection = mysql.createConnection(db_config);
+
+    mysqlConnection.connect(function (err) {
+        if (err) {
+            mysqlConnection.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000);
+        }
+    });
+    mysqlConnection.on('error', function (err) {
+        console.error(con.err + err)
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+            handleDisconnect();
+        } else {
+            throw err;
+        }
+    });
+}
+
+handleDisconnect();
 
 // mysql.Connection methods accept callback functions rather than returning promises
 // which makes it inconvenient to work with them in modern JavaScript development
