@@ -7,21 +7,23 @@ async function getNameList() {
 }
 
 // Returns anonymized Assessment Notes
-async function anonymize(userAssessmentList) {
-    const userNameList = await getNameList();
+function anonymize(userAssessmentList) {
+    const userNameList = await getNameList()
     let reservedIDs = {};
 
-    // WIP
     for (let userAssessment of userAssessmentList) {
+        let internalNotes = userAssessment.internalNotes.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        let externalFeedback = userAssessment.externalFeedback.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
         if (!!userAssessment.internalNotes) {
-            let temp = replaceNamesInNotes(userAssessment.internalNotes, userNameList, reservedIDs);
-            userAssessment.internalNotes = temp.assessmentNotes;
-            reservedIDs = Object.assign({}, reservedIDs, temp.reservedIDs);
+            internalNotes = replaceNamesInNotes(internalNotes, userNameList, reservedIDs);
+            userAssessment.internalNotes = internalNotes.assessmentNotes;
+            reservedIDs = Object.assign({}, reservedIDs, internalNotes.reservedIDs);
         }
         if (!!userAssessment.externalFeedback) {
-            let temp = replaceNamesInNotes(userAssessment.externalFeedback, userNameList,reservedIDs);
-            userAssessment.externalFeedback = temp.assessmentNotes;
-            reservedIDs = Object.assign({}, reservedIDs, temp.reservedIDs);
+            externalFeedback = replaceNamesInNotes(externalFeedback, userNameList,reservedIDs);
+            userAssessment.externalFeedback = externalFeedback.assessmentNotes;
+            reservedIDs = Object.assign({}, reservedIDs, internalNotes.reservedIDs);
         }
     }
     return userAssessmentList;
