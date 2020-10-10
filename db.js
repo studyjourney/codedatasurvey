@@ -44,7 +44,7 @@ const newStudent = async () => {
     return studentId
 }
 
-const writeAssessments = (studentId, myStudies) => {
+const writeAssessments = (studentId, assessments) => {
     const assessmentsSql = `INSERT INTO assessments(
         student_id,
         module_short_code,
@@ -62,36 +62,32 @@ const writeAssessments = (studentId, myStudies) => {
         project_lp_id,
         semester_module_lp_id
     ) VALUES ?;`
-    const assessmentsValues = []
-    for (const module of myStudies) {
-        const { shortCode, assessments } = module
-        for (const assessment of assessments) {
-            // I am not completely sure of the type of assessment.examinationForms
-            // but I think it could still be pretty vaulable information to have
-            // so that's why I'm doing this. I think it's an array.
-            const examinationForms = Array.isArray(assessment.examinationForms) ?
-                assessment.examinationForms.length ? assessment.examinationForms : null :
-                JSON.stringify(assessment.examinationForms)
-            assessmentsValues.push([
-                studentId,
-                shortCode,
-                assessment.assessmentStatus,
-                assessment.assessmentStyle,
-                examinationForms,
-                assessment.proposalText,
-                assessment.grade,
-                assessment.assessmentProtocol,
-                assessment.internalNotes,
-                assessment.externalFeedback,
-                assessment.attempt,
-                assessment.earlyAssessmentProposal,
-                assessment.assessmentType,
-                assessment.project?.id,
-                assessment.semesterModule?.id,
-            ])
-        }
-    }
-    if (assessmentsValues.length) return connection.query(assessmentsSql, [assessmentsValues])
+    const assessmentsValues = assessments.map(assessment => {
+        // I am not completely sure of the type of assessment.examinationForms
+        // but I think it could still be pretty vaulable information to have
+        // so that's why I'm doing this. I think it's an array.
+        const examinationForms = Array.isArray(assessment.examinationForms) ?
+            assessment.examinationForms.length ? assessment.examinationForms : null :
+            JSON.stringify(assessment.examinationForms)
+        return [
+            studentId,
+            assessment.shortCode,
+            assessment.assessmentStatus,
+            assessment.assessmentStyle,
+            examinationForms,
+            assessment.proposalText,
+            assessment.grade,
+            assessment.assessmentProtocol,
+            assessment.internalNotes,
+            assessment.externalFeedback,
+            assessment.attempt,
+            assessment.earlyAssessmentProposal,
+            assessment.assessmentType,
+            assessment.project?.id,
+            assessment.semesterModule?.id,
+        ]
+    })
+    return connection.query(assessmentsSql, [assessmentsValues])
 }
 
 const writeCurrentSemester = (studentId, mySemesterModules) => {

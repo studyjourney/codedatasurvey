@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { notesAnonymizer } = require('../anonymization')
 
 const db = require('../db');
 const con = require('../consolelog');
@@ -10,8 +11,16 @@ router.post('/', async (req, res) => {
         const { token, permissions } = req.body
         if (!await tokenIsValid(token)) return res.status(400).send('invalid token')
         const studentId = await db.newStudent()
-        const assessments = await getMyStudies(token, permissions.projects)
-        await db.writeAssessments(studentId, assessments)
+        const myStudies = await getMyStudies(token, permissions.projects)
+        let allAssessments = []
+        for (const module of myStudies) {
+            const { shortCode, assessments } = module
+            allAssessments = allAssessments.concat(assessments.map(assessment => ({ shortCode, ...assessment })))
+        }
+        if (allAssessments.length) {
+            allAssessments = await notesAnonymizer(allAssessments)
+            await db.writeAssessments(studentId, allAssessments)
+        }
         if (permissions.currentSemester) await db.writeCurrentSemester(studentId, await getCurrentSemester(token))
         if (permissions.events) await db.writeEvents(studentId, await getEvents(token))
         if (permissions.projects) await db.writeProjects(studentId, await getProjects(token))
