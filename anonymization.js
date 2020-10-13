@@ -12,15 +12,15 @@ async function anonymize(userAssessmentList) {
     let reservedIDs = {};
 
     for (let userAssessment of userAssessmentList) {
-        let internalNotes = userAssessment.internalNotes.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        let externalFeedback = userAssessment.externalFeedback.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
         if (!!userAssessment.internalNotes) {
+            let internalNotes = userAssessment.internalNotes.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             internalNotes = replaceNamesInNotes(internalNotes, userNameList, reservedIDs);
             userAssessment.internalNotes = internalNotes.assessmentNotes;
             reservedIDs = Object.assign({}, reservedIDs, internalNotes.reservedIDs);
         }
         if (!!userAssessment.externalFeedback) {
+            let externalFeedback = userAssessment.externalFeedback.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             externalFeedback = replaceNamesInNotes(externalFeedback, userNameList,reservedIDs);
             userAssessment.externalFeedback = externalFeedback.assessmentNotes;
             reservedIDs = Object.assign({}, reservedIDs, internalNotes.reservedIDs);
