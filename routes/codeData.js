@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { notesAnonymizer } = require('../anonymization')
+const notesAnonymizer = require('../anonymization')
 
 const db = require('../db');
 const con = require('../consolelog');
