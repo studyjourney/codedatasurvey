@@ -23,7 +23,7 @@ async function anonymize(userAssessmentList) {
             let externalFeedback = userAssessment.externalFeedback.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             externalFeedback = replaceNamesInNotes(externalFeedback, userNameList,reservedIDs);
             userAssessment.externalFeedback = externalFeedback.assessmentNotes;
-            reservedIDs = Object.assign({}, reservedIDs, internalNotes.reservedIDs);
+            reservedIDs = Object.assign({}, reservedIDs, externalFeedback.reservedIDs);
         }
     }
     return userAssessmentList;
