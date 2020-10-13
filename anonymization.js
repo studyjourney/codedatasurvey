@@ -7,7 +7,7 @@ async function getNameList() {
 }
 
 // Returns anonymized Assessment Notes
-function anonymize(userAssessmentList) {
+async function anonymize(userAssessmentList) {
     const userNameList = await getNameList()
     let reservedIDs = {};
 
