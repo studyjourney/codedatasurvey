@@ -20,7 +20,8 @@ app.use('/', express.static('static'));
 */
 const indexRouter = require('./routes/index')
 const pingRouter = require('./routes/ping')
-const codeDataRouter = require('./routes/codeData')
+const codeDataRouter = require('./routes/codeData');
+const { createConn } = require('./db');
 
 app.use('/', indexRouter);
 app.use('/ping', pingRouter);
@@ -36,9 +37,10 @@ app.get('*', function (req, res) {
 app.listen(process.env.PORT, function () {
     console.log('\033c')
     console.log(con.wlc);
-    db.connection.ping()
-    .then(() => console.log(con.info + 'Connected to the MySQL server'))
-    .catch(err => console.error(con.err + err))
+    db.connection.connect((err) => {
+        if (err) console.error(con.err + 'Cant ping DB: ' + err);
+        console.log(con.info + 'Connected to the MySQL server');
+    })
     console.log(con.info + `Listening on port ${process.env.PORT}`);
 });
 

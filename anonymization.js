@@ -1,7 +1,10 @@
 const { connection } = require('./db')
 
 async function getNameList() {
-    const dbNames = await connection.query('SELECT * FROM code_user_names')
+    const dbNames = await connection.connect(async (err) => {
+        if (err) console.error(con.err + err);
+        else return await connection.query('SELECT * FROM code_user_names')
+    })
     let nameList = dbNames.map(dbName => dbName.name)
     return nameList
 }

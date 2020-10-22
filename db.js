@@ -9,42 +9,18 @@ var db_config = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
 };
-var mysqlConnection;
-function handleDisconnect() {
-    mysqlConnection = mysql.createConnection(db_config);
 
-    mysqlConnection.connect(function (err) {
-        if (err) {
-            mysqlConnection.log('error when connecting to db:', err);
-            setTimeout(handleDisconnect, 2000);
-        }
-    });
-    mysqlConnection.on('error', function (err) {
-        console.error(con.err + err)
-        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            handleDisconnect();
-        } else {
-            throw err;
-        }
-    });
-}
-
-handleDisconnect();
-
-// mysql.Connection methods accept callback functions rather than returning promises
-// which makes it inconvenient to work with them in modern JavaScript development
-// unless you "promisify" the methods you want to use first.
-const connection = {
-    query: util.promisify(mysqlConnection.query).bind(mysqlConnection),
-    ping: util.promisify(mysqlConnection.ping).bind(mysqlConnection),
-}
+const connection = mysql.createConnection(db_config);
 
 const newStudent = async () => {
-    const { insertId: studentId } = await connection.query('INSERT INTO students () values ();')
+    const { insertId: studentId } = await connection.connect((err) => {
+        if (err) console.error(con.err + err);
+        else return connection.query('INSERT INTO students () values ();')
+    })
     return studentId
 }
 
-const writeAssessments = (studentId, assessments) => {
+const writeAssessments = async (studentId, assessments) => {
     const assessmentsSql = `INSERT INTO assessments(
         student_id,
         module_short_code,
@@ -87,37 +63,53 @@ const writeAssessments = (studentId, assessments) => {
             assessment.semesterModule?.id,
         ]
     })
-    return connection.query(assessmentsSql, [assessmentsValues])
+    const result = await connection.connect(async (err) => {
+        if (err) console.error(con.err + err);
+        else return await connection.query(assessmentsSql, [assessmentsValues]);
+    })
+    return result
 }
 
-const writeCurrentSemester = (studentId, mySemesterModules) => {
+const writeCurrentSemester = async (studentId, mySemesterModules) => {
     if (!mySemesterModules.length) return
     const currentSemesterSql = `INSERT INTO fs20_modules(
         student_id,
         semester_module_lp_id
     ) VALUES ?;`
     const currentSemesterValues = mySemesterModules.map(module => [studentId, module.id])
-    return connection.query(currentSemesterSql, [currentSemesterValues])
+    const result = await connection.connect(async (err) => {
+        if (err) console.error(con.err + err);
+        else return await connection.query(currentSemesterSql, [currentSemesterValues]);
+    })
+    return result
 }
 
-const writeEvents = (studentId, myEventGroups) => {
+const writeEvents = async (studentId, myEventGroups) => {
     if (!myEventGroups.length) return
     const eventsSql = `INSERT INTO students_event_groups(
         student_id,
         event_group_lp_id
     ) VALUES ?`
     const eventsValues = myEventGroups.map(event => [studentId, event.id])
-    return connection.query(eventsSql, [eventsValues])
+    const result = await connection.connect(async (err) => {
+        if (err) console.error(con.err + err);
+        else return await connection.query(eventsSql, [eventsValues])
+    })
+    return result
 }
 
-const writeProjects = (studentId, myProjects) => {
+const writeProjects = async (studentId, myProjects) => {
     if (!myProjects.length) return
     const projectSql = `INSERT INTO students_projects(
         student_id,
         project_lp_id
     ) VALUES ?`
     const projectsValues = myProjects.map(project => [studentId, project.id])
-    return connection.query(projectSql, [projectsValues])
+    const result = await connection.connect(async (err) => {
+        if (err) console.error(con.err + err);
+        else return await connection.query(projectSql, [projectsValues])
+    })
+    return result
 }
 
 module.exports = {
