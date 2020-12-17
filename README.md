@@ -140,7 +140,7 @@ Main MyStudies Query
 ## Database Structure
 To store the data a MySQL DB is being used. 
 **Diagram of MySQL**:
-![Database Model](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/150726b6-fa4d-411e-a0ed-ed7457f8a83e/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20201123%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20201123T180509Z&X-Amz-Expires=86400&X-Amz-Signature=ec3dcbca3cbe55984d44dec8d8ece43ff1b9eb310b4386ea536b9fb776dc5fb3&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22)
+![Database Model](https://i.imgur.com/T1e9Eea.png)
 
 <!-- LICENSE -->
 ## License
